@@ -15,7 +15,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Static file serving
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/captures", StaticFiles(directory="captures"), name="captures")
+app.mount("/projects", StaticFiles(directory="projects"), name="projects")
 
+# API routes (your existing endpoints)
 app.include_router(api_router)

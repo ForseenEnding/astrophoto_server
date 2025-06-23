@@ -3,3 +3,8 @@ pydantic==2.11.7
 uvicorn==0.34.3
 gphoto2==2.6.1
 wrapt==1.17.2
+
+# Image analysis dependencies
+Pillow==10.4.0
+numpy==1.26.4
+opencv-python-headless==4.10.0.84

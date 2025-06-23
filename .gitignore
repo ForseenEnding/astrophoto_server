@@ -3,3 +3,6 @@
 /captures
 /logs
 /string
+valid_configs.json
+/projects
+__pycache__
