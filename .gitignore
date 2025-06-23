@@ -1,7 +1,7 @@
 # ────────────────────────────────────────────
 # Python
 # ────────────────────────────────────────────
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *.so
 *.egg
@@ -92,4 +92,8 @@ desktop.ini
 # Project files
 # ────────────────────────────────────────────
 captures
+<<<<<<< HEAD
 projects
+=======
+projects
+>>>>>>> b91c5b8 (Remove unused frontend TypeScript files and configurations)
