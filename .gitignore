@@ -87,3 +87,9 @@ yarn.lock
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# ────────────────────────────────────────────
+# Project files
+# ────────────────────────────────────────────
+captures
+projects
