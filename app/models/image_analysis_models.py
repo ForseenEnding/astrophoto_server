@@ -108,7 +108,6 @@ class AnalysisRequest(BaseModel):
 class BatchAnalysisRequest(BaseModel):
     """Request for batch analysis of multiple images"""
 
-    session_id: str = Field(..., description="Session ID to analyze")
     detect_stars: bool = Field(False, description="Perform star detection")
     generate_thumbnails: bool = Field(True, description="Generate thumbnails")
     force_reanalyze: bool = Field(False, description="Re-analyze already processed images")

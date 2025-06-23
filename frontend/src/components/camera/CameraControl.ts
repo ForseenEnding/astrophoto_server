@@ -151,33 +151,95 @@ export class CameraControl {
     try {
       this.isCapturing = true;
       this.updateCaptureButton(true);
-      this.updateStatus('Capturing image...');
+      this.updateStatus('Checking active session...');
 
-      const captureData = {
-        save_to_path: 'test_captures',
-        image_name: `test_${new Date().getTime()}`
-      };
-
-      const response = await fetch('/api/camera/capture', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(captureData)
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        this.updateStatus(`Image captured: ${result.filename}`);
-        this.displayCaptureResult(result);
-      } else {
-        this.updateStatus(`Capture failed: ${result.detail}`, 'error');
+      // First, check for active session
+      let activeSession = null;
+      try {
+        const sessionResponse = await fetch('/api/sessions/');
+        const sessionData = await sessionResponse.json();
+        
+        if (sessionResponse.ok && sessionData.active_session_id) {
+          // Get the active session details
+          activeSession = sessionData.sessions.find(
+            (s: any) => s.id === sessionData.active_session_id
+          );
+        }
+      } catch (sessionError) {
+        console.warn('Failed to fetch session data, using manual capture:', sessionError);
+        // Continue with manual capture if session fetch fails
       }
+
+      if (activeSession) {
+        // Session-based capture
+        this.updateStatus(`Capturing to session: ${activeSession.name}...`);
+        
+        const sessionCaptureData = {
+          image_name: null // Let the backend auto-generate based on session
+        };
+
+        const response = await fetch(`/api/sessions/${activeSession.id}/capture`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(sessionCaptureData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          const captureNum = result.capture_number || 'N/A';
+          this.updateStatus(
+            `✓ Session capture #${captureNum}: ${result.filename}`
+          );
+          this.displaySessionCaptureResult(result, activeSession);
+        } else {
+          // Session capture failed, try manual fallback
+          this.updateStatus('Session capture failed, trying manual capture...', 'error');
+          await this.fallbackToManualCapture();
+        }
+      } else {
+        // Manual capture (no active session)
+        this.updateStatus('No active session - capturing manually...');
+        await this.performManualCapture();
+      }
+
     } catch (error) {
       this.updateStatus('Capture error occurred', 'error');
       console.error('Capture error:', error);
     } finally {
       this.isCapturing = false;
       this.updateCaptureButton(false);
+    }
+  }
+
+  private async performManualCapture() {
+    const captureData = {
+      save_to_path: 'manual_captures',
+      image_name: `manual_${new Date().getTime()}`
+    };
+
+    const response = await fetch('/api/camera/capture', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(captureData)
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      this.updateStatus(`Manual capture: ${result.filename}`);
+      this.displayCaptureResult(result);
+    } else {
+      this.updateStatus(`Manual capture failed: ${result.detail}`, 'error');
+    }
+  }
+
+  private async fallbackToManualCapture() {
+    try {
+      await this.performManualCapture();
+    } catch (fallbackError) {
+      this.updateStatus('Both session and manual capture failed', 'error');
+      console.error('Fallback capture error:', fallbackError);
     }
   }
 
@@ -322,6 +384,67 @@ export class CameraControl {
               </div>
             ` : ''}
           </div>
+        </div>
+      `;
+    }
+  }
+
+  private displaySessionCaptureResult(result: any, session: any) {
+    const resultContainer = this.container.querySelector('.capture-result');
+    if (resultContainer) {
+      const progress = session.capture_plan?.target_count ? 
+        Math.round((result.capture_number / session.capture_plan.target_count) * 100) : 0;
+
+      resultContainer.innerHTML = `
+        <div class="capture-success session-capture">
+          <h4>✓ Session Capture Successful</h4>
+          <div class="session-info">
+            <div class="detail-row">
+              <span>Session:</span>
+              <span class="mono">${session.name}</span>
+            </div>
+            <div class="detail-row">
+              <span>Target:</span>
+              <span class="mono">${session.target}</span>
+            </div>
+            <div class="detail-row">
+              <span>Capture #:</span>
+              <span class="mono">${result.capture_number}</span>
+            </div>
+            ${session.capture_plan?.target_count ? `
+              <div class="detail-row">
+                <span>Progress:</span>
+                <span class="mono">${result.capture_number}/${session.capture_plan.target_count} (${progress}%)</span>
+              </div>
+            ` : ''}
+          </div>
+          <div class="capture-details">
+            <div class="detail-row">
+              <span>Filename:</span>
+              <span class="mono">${result.filename}</span>
+            </div>
+            <div class="detail-row">
+              <span>Size:</span>
+              <span class="mono">${result.size_bytes ? (result.size_bytes / 1024 / 1024).toFixed(2) + ' MB' : 'Unknown'}</span>
+            </div>
+            <div class="detail-row">
+              <span>Timestamp:</span>
+              <span class="mono">${new Date(result.timestamp).toLocaleString()}</span>
+            </div>
+            ${result.static_url ? `
+              <div class="detail-row">
+                <span>Location:</span>
+                <a href="${result.static_url}" target="_blank" class="file-link">${result.static_url}</a>
+              </div>
+            ` : ''}
+          </div>
+          ${progress > 0 ? `
+            <div class="session-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${progress}%"></div>
+              </div>
+            </div>
+          ` : ''}
         </div>
       `;
     }

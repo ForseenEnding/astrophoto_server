@@ -1,8 +1,89 @@
-/.venv
-/camera
-/captures
-/logs
-/string
-valid_configs.json
-/projects
-__pycache__
+# ────────────────────────────────────────────
+# Python
+# ────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+*.bak
+*.tmp
+*.env
+.env.*
+*.cover
+.coverage
+htmlcov/
+site/
+.mypy_cache/
+.dmypy.json
+.pytest_cache/
+.pyre/
+.pytype/
+.tox/
+.cache/
+pip-wheel-metadata/
+pip-log.txt
+
+# Virtualenv
+venv/
+ENV/
+env/
+.venv/
+.ENV/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ────────────────────────────────────────────
+# FastAPI / Uvicorn / Gunicorn
+# ────────────────────────────────────────────
+*.pid
+instance/
+*.log
+logs/
+*.db-journal
+
+# ────────────────────────────────────────────
+# Node.js / TypeScript / Vite (Frontend)
+# ────────────────────────────────────────────
+node_modules
+dist/
+build/
+.vite/
+*.tsbuildinfo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Package lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# ────────────────────────────────────────────
+# OS Files
+# ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
