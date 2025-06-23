@@ -1,0 +1,29 @@
+{
+  "folders": [
+    {
+      "name": "Backend",
+      "path": "./app"
+    },
+    {
+      "name": "Frontend", 
+      "path": "./frontend"
+    },
+    {
+      "name": "Root",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "./.venv/bin/python",
+    "eslint.workingDirectories": ["frontend"],
+    "typescript.preferences.includePackageJsonAutoImports": "on"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.black-formatter", 
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint"
+    ]
+  }
+}

@@ -4,9 +4,10 @@ from pathlib import Path
 
 
 class CameraStatusResponse(BaseModel):
-    model: str
-    connected: bool
-    battery: str
+    model: str = Field(None)
+
+    connected: bool = Field(...)
+    battery: str = Field(None)
 
 
 class CaptureRequest(BaseModel):

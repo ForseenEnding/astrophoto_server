@@ -50,11 +50,7 @@ async def get_camera_status(service: CameraService = Depends(get_camera_service)
 
     try:
         if not service.is_connected():
-            logger.warning("Camera status requested but camera is not connected")
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Camera is not connected to service",
-            )
+            return CameraStatusResponse(connected=False)
 
         # Get camera configuration values
         configs = service.get_values(["cameramodel", "batterylevel"])
@@ -72,12 +68,6 @@ async def get_camera_status(service: CameraService = Depends(get_camera_service)
     except CameraError as e:
         logger.error(f"Camera error while getting status: {e}")
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=f"Camera error: {str(e)}")
-    except Exception as e:
-        logger.error(f"Unexpected error getting camera status: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error while getting camera status",
-        )
 
 
 @router.post("/connect")
