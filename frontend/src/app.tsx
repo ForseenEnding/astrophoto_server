@@ -1,11 +1,12 @@
 import { useState } from 'react'
+import { CameraConfiguration } from './components/CameraConfiguration'
 import { CameraControl } from './components/CameraControl'
 import { ImageGallery } from './components/ImageGallery'
 import { Navigation } from './components/Navigation'
 import { NightVisionToggle } from './components/NightVisionToggle'
 import { SessionManager } from './components/SessionManager'
 
-type ViewType = 'dashboard' | 'camera' | 'sessions' | 'gallery'
+type ViewType = 'dashboard' | 'camera' | 'sessions' | 'gallery' | 'configuration'
 
 export function App() {
   const [currentView, setCurrentView] = useState<ViewType>('dashboard')
@@ -16,6 +17,12 @@ export function App() {
         return (
           <div className="full-screen-view">
             <CameraControl />
+          </div>
+        )
+      case 'configuration':
+        return (
+          <div className="full-screen-view">
+            <CameraConfiguration />
           </div>
         )
       case 'sessions':

@@ -1,6 +1,6 @@
-import { Camera, FolderOpen, Image, LayoutDashboard } from 'lucide-react'
+import { Camera, FolderOpen, Image, LayoutDashboard, Settings } from 'lucide-react'
 
-type ViewType = 'dashboard' | 'camera' | 'sessions' | 'gallery'
+type ViewType = 'dashboard' | 'camera' | 'sessions' | 'gallery' | 'configuration'
 
 interface NavigationProps {
   currentView: ViewType
@@ -11,6 +11,7 @@ export function Navigation({ currentView, onViewChange }: NavigationProps) {
   const navItems = [
     { id: 'dashboard' as ViewType, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'camera' as ViewType, label: 'Camera', icon: Camera },
+    { id: 'configuration' as ViewType, label: 'Configuration', icon: Settings },
     { id: 'sessions' as ViewType, label: 'Sessions', icon: FolderOpen },
     { id: 'gallery' as ViewType, label: 'Gallery', icon: Image },
   ]
