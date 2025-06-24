@@ -1,12 +1,12 @@
 import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react()],
   root: './src',
   build: {
-    outDir: '../../static',
+    outDir: resolve(__dirname, '../static'),  // Absolute path to static directory
     emptyOutDir: true,
     rollupOptions: {
       input: {
