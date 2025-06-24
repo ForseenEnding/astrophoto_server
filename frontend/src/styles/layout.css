@@ -215,3 +215,15 @@
     text-align: center;
     flex: 1;
   }
+
+  /* Calibration Page Layout */
+.calibration-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .full-screen-view .calibration-page {
+    padding: var(--spacing-md);
+  }

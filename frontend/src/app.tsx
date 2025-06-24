@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { CalibrationPage } from './components/CalibrationPage'
 import { CameraConfiguration } from './components/CameraConfiguration'
 import { CameraControl } from './components/CameraControl'
 import { ImageGallery } from './components/ImageGallery'
@@ -7,7 +8,7 @@ import { NavigationStatusBar } from './components/NavigationStatusBar'
 import { NightVisionToggle } from './components/NightVisionToggle'
 import { SessionManager } from './components/SessionManager'
 
-type ViewType = 'dashboard' | 'camera' | 'sessions' | 'gallery' | 'configuration'
+type ViewType = 'dashboard' | 'camera' | 'calibration' | 'sessions' | 'gallery' | 'configuration'
 
 export function App() {
   const [currentView, setCurrentView] = useState<ViewType>('dashboard')
@@ -18,6 +19,12 @@ export function App() {
         return (
           <div className="full-screen-view">
             <CameraControl />
+          </div>
+        )
+      case 'calibration':
+        return (
+          <div className="full-screen-view">
+            <CalibrationPage />
           </div>
         )
       case 'configuration':

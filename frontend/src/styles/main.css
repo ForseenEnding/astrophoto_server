@@ -10,5 +10,6 @@
 @import './bulk-capture.css';
 @import './themes.css';
 @import './utilities.css';
+@import './calibration.css'
 
 /* Any global overrides or legacy styles can go here temporarily */

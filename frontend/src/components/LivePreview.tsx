@@ -1,8 +1,17 @@
 import { CameraAPI } from '@/services/camera-api'
-import { ExternalLink, Eye, Maximize2, Minimize2, RefreshCw } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { ExternalLink, Eye, Maximize2, Minimize2, RefreshCw, Settings } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const cameraAPI = new CameraAPI('/api/camera')
+
+// FPS presets for preview refresh rate
+const FPS_PRESETS = [
+  { value: 0.5, label: '0.5 FPS', interval: 2000 },
+  { value: 1, label: '1 FPS', interval: 1000 },
+  { value: 2, label: '2 FPS', interval: 500 },
+  { value: 5, label: '5 FPS', interval: 200 },
+  { value: 10, label: '10 FPS', interval: 100 }
+]
 
 export function LivePreview() {
   const [previewUrl, setPreviewUrl] = useState<string>('')
@@ -10,10 +19,20 @@ export function LivePreview() {
   const [isAutoRefresh, setIsAutoRefresh] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [fitMode, setFitMode] = useState<'contain' | 'cover'>('cover') // 'contain' = fit to container, 'cover' = stretch to fill
+  const [fitMode, setFitMode] = useState<'contain' | 'cover'>('cover')
+  const [showSettings, setShowSettings] = useState(false)
+  const [selectedFps, setSelectedFps] = useState(1) // Default to 1 FPS
+  
+  // Use useRef to store the interval ID and make sure it persists
   const intervalRef = useRef<number | null>(null)
+  // Use useRef to track if auto-refresh should be active
+  const isAutoRefreshRef = useRef(false)
 
-  const capturePreview = async () => {
+  // Get interval from selected FPS
+  const currentInterval = FPS_PRESETS.find(preset => preset.value === selectedFps)?.interval || 1000
+
+  // Wrap capturePreview in useCallback to prevent recreation on every render
+  const capturePreview = useCallback(async () => {
     try {
       setError(null)
       setIsLoading(true)
@@ -34,36 +53,60 @@ export function LivePreview() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [previewUrl])
 
-  const startAutoRefresh = () => {
-    if (intervalRef.current) return
+  const startAutoRefresh = useCallback(() => {
+    // Clear any existing interval first
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+    }
     
+    isAutoRefreshRef.current = true
     setIsAutoRefresh(true)
-    intervalRef.current = window.setInterval(capturePreview, 500) // Every 500ms
-  }
+    
+    // Capture immediately
+    capturePreview()
+    
+    // Then set up interval for subsequent captures using current FPS setting
+    intervalRef.current = window.setInterval(() => {
+      // Double-check that auto-refresh is still enabled
+      if (isAutoRefreshRef.current) {
+        capturePreview()
+      }
+    }, currentInterval)
+  }, [capturePreview, currentInterval])
 
-  const stopAutoRefresh = () => {
+  const stopAutoRefresh = useCallback(() => {
+    isAutoRefreshRef.current = false
+    setIsAutoRefresh(false)
+    
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
       intervalRef.current = null
     }
-    setIsAutoRefresh(false)
-  }
+  }, [])
 
-  const toggleAutoRefresh = () => {
+  const toggleAutoRefresh = useCallback(() => {
     if (isAutoRefresh) {
       stopAutoRefresh()
     } else {
       startAutoRefresh()
     }
-  }
+  }, [isAutoRefresh, startAutoRefresh, stopAutoRefresh])
 
-  const toggleFitMode = () => {
+  // Restart auto-refresh when FPS changes
+  useEffect(() => {
+    if (isAutoRefresh) {
+      stopAutoRefresh()
+      startAutoRefresh()
+    }
+  }, [selectedFps]) // Re-run when FPS changes
+
+  const toggleFitMode = useCallback(() => {
     setFitMode(prev => prev === 'contain' ? 'cover' : 'contain')
-  }
+  }, [])
 
-  const openInNewWindow = () => {
+  const openInNewWindow = useCallback(() => {
     if (!previewUrl) return
     
     const newWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes')
@@ -148,14 +191,27 @@ export function LivePreview() {
       `)
       newWindow.document.close()
     }
-  }
+  }, [previewUrl, lastUpdate])
 
-  // Cleanup on unmount
+  // Cleanup effect - runs when component unmounts or dependencies change
   useEffect(() => {
     return () => {
+      // Stop auto-refresh when component unmounts
+      isAutoRefreshRef.current = false
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
+        intervalRef.current = null
       }
+      // Clean up blob URL
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl)
+      }
+    }
+  }, []) // Empty dependency array means this only runs on mount/unmount
+
+  // Separate effect to clean up blob URLs when they change
+  useEffect(() => {
+    return () => {
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl)
       }
@@ -164,13 +220,44 @@ export function LivePreview() {
 
   return (
     <div className="live-preview">
-      {/* Only show header when no image is loaded */}
+      {/* Header with settings toggle */}
       {!previewUrl && (
         <div className="preview-header">
           <h3>
             <Eye className="inline w-4 h-4 mr-2" />
             Live Preview
           </h3>
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="btn btn-secondary btn-sm"
+            title="Preview settings"
+          >
+            <Settings className="w-3 h-3" />
+          </button>
+        </div>
+      )}
+
+      {/* Settings panel */}
+      {showSettings && (
+        <div className="preview-settings">
+          <div className="form-group">
+            <label htmlFor="fps-select">Refresh Rate:</label>
+            <select
+              id="fps-select"
+              className="select"
+              value={selectedFps}
+              onChange={(e) => setSelectedFps(Number(e.target.value))}
+            >
+              {FPS_PRESETS.map(preset => (
+                <option key={preset.value} value={preset.value}>
+                  {preset.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-help">
+            Higher refresh rates provide smoother updates but use more bandwidth and CPU.
+          </div>
         </div>
       )}
 
@@ -201,7 +288,7 @@ export function LivePreview() {
               <button
                 onClick={toggleAutoRefresh}
                 className={`btn overlay btn-sm ${isAutoRefresh ? 'btn-primary' : 'btn-secondary'}`}
-                title={isAutoRefresh ? 'Stop auto-refresh' : 'Start auto-refresh'}
+                title={isAutoRefresh ? `Stop auto-refresh (${selectedFps} FPS)` : `Start auto-refresh (${selectedFps} FPS)`}
               >
                 {isAutoRefresh ? 'Stop Auto' : 'Auto'}
               </button>
@@ -227,7 +314,22 @@ export function LivePreview() {
                 )}
                 {fitMode === 'cover' ? 'Fit' : 'Fill'}
               </button>
+
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="btn overlay btn-secondary btn-sm"
+                title="Preview settings"
+              >
+                <Settings className="w-3 h-3" />
+              </button>
             </div>
+
+            {/* Error overlay */}
+            {error && (
+              <div className="error-overlay">
+                <p className="text-sm">{error}</p>
+              </div>
+            )}
           </>
         ) : (
           <div className="preview-placeholder">
@@ -250,16 +352,11 @@ export function LivePreview() {
               <button
                 onClick={toggleAutoRefresh}
                 className={`btn btn-sm ${isAutoRefresh ? 'btn-primary' : 'btn-secondary'}`}
+                title={`${isAutoRefresh ? 'Stop' : 'Start'} auto-refresh (${selectedFps} FPS)`}
               >
                 {isAutoRefresh ? 'Stop Auto' : 'Auto'}
               </button>
             </div>
-          </div>
-        )}
-        
-        {error && (
-          <div className="error-overlay">
-            <p className="text-sm">{error}</p>
           </div>
         )}
       </div>
@@ -268,7 +365,7 @@ export function LivePreview() {
         {lastUpdate ? (
           <p className="text-xs">
             Last updated: {lastUpdate.toLocaleTimeString()}
-            {isAutoRefresh && <span className="ml-2">(Auto-refreshing)</span>}
+            {isAutoRefresh && <span className="ml-2">(Auto-refreshing at {selectedFps} FPS)</span>}
             <span className="ml-2">
               • Display: {fitMode === 'cover' ? 'Stretch to Fill' : 'Fit to Container'}
             </span>
