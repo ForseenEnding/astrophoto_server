@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 from pathlib import Path
+from datetime import datetime
+from typing import Union
 
 
 class CameraStatusResponse(BaseModel):
@@ -73,4 +75,41 @@ class ConfigUpdateResponse(BaseModel):
     success: bool
     updated_configs: list[str]
     failed_configs: Optional[dict[str, str]] = None
+    message: str
+
+
+class CameraPreset(BaseModel):
+    name: str = Field(..., description="Unique preset identifier")
+    label: str = Field(..., description="Human-readable preset name")
+    description: Optional[str] = Field(None, description="Preset description")
+    created_at: datetime = Field(default_factory=datetime.now)
+    configs: dict[str, Union[str, int, float, bool]] = Field(..., description="Camera configuration values")
+
+    # Allow arbitrary types for the configs
+    model_config = {"arbitrary_types_allowed": True}
+
+
+class CreatePresetRequest(BaseModel):
+    name: str = Field(..., description="Unique preset identifier (filesystem safe)")
+    label: str = Field(..., description="Human-readable preset name")
+    description: Optional[str] = Field(None, description="Preset description")
+
+    @field_validator("name")
+    @classmethod
+    def validate_preset_name(cls, v):
+        # Ensure filesystem-safe name
+        import re
+
+        if not re.match(r"^[a-zA-Z0-9_-]+$", v):
+            raise ValueError("Preset name must contain only letters, numbers, underscores, and hyphens")
+        return v.lower()
+
+
+class PresetListResponse(BaseModel):
+    presets: list[CameraPreset]
+
+
+class ApplyPresetResponse(BaseModel):
+    success: bool
+    applied_configs: list[str]
     message: str

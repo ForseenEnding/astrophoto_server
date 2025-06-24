@@ -34,6 +34,29 @@ router = APIRouter(
     tags=["camera"],
 )
 
+CONFIG_GROUPS = {
+    "exposure": {
+        "label": "Exposure Settings",
+        "description": "Core settings affecting image brightness and quality",
+        "config_names": ["iso", "aperture", "shutterspeed", "exposurecompensation", "meteringmode"],
+    },
+    "capture": {
+        "label": "Capture Settings",
+        "description": "Image format and capture behavior",
+        "config_names": ["imageformat", "capturetarget", "drivemode", "bracketmode", "aeb"],
+    },
+    "system": {
+        "label": "System Settings",
+        "description": "Camera status and power management",
+        "config_names": ["datetime", "autopoweroff", "batterylevel", "serialnumber", "availableshots"],
+    },
+    "advanced": {
+        "label": "Advanced Settings",
+        "description": "Image quality and color fine-tuning",
+        "config_names": ["colorspace", "picturestyle", "highisonr", "whitebalance", "colortemperature"],
+    },
+}
+
 
 @router.get(path="/status", response_model=CameraStatusResponse)
 async def get_camera_status(service: CameraService = Depends(get_camera_service)):
@@ -419,4 +442,57 @@ async def set_camera_config(request: ConfigUpdateRequest, service: CameraService
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error setting camera configuration",
+        )
+
+
+@router.get("/config/groups")
+async def get_camera_config_groups(service: CameraService = Depends(get_camera_service)):
+    """
+    Get camera configurations organized by functional groups.
+
+    Returns:
+        dict: Groups metadata and all grouped configs
+
+    Raises:
+        HTTPException: 503 if camera not connected
+    """
+    try:
+        # Check if camera is connected first
+        if not service.is_connected():
+            raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Camera not connected")
+
+        # Get all camera configs
+        all_configs = service.get_all_configs()
+
+        # Extract only the config names we care about
+        grouped_config_names = set()
+        for group_info in CONFIG_GROUPS.values():
+            grouped_config_names.update(group_info["config_names"])
+
+        # Build the configs dict with only grouped configs
+        configs = {}
+        for config_name in grouped_config_names:
+            camera_config = all_configs.get(config_name)
+            if camera_config is not None:
+                configs[config_name] = CameraConfig(
+                    name=camera_config.name,
+                    type=camera_config.type,
+                    label=camera_config.label,
+                    read_only=camera_config.read_only,
+                    value=camera_config.value,
+                    choices=camera_config.choices,
+                )
+            else:
+                configs[config_name] = None
+
+        return {"groups": CONFIG_GROUPS, "configs": configs}
+
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected error getting grouped camera config: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error getting camera configuration",
         )
