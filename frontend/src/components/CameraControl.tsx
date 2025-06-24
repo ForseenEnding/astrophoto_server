@@ -10,7 +10,6 @@ interface CameraControlProps {
 export function CameraControl({ compact = false }: CameraControlProps) {
   const {
     status,
-    isLoading,
     connect,
     disconnect,
     capture,

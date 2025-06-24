@@ -25,7 +25,7 @@ export function NightVisionToggle() {
   }, [isNightMode])
 
   const toggleMode = () => {
-    setIsNightMode(prev => !prev)
+    setIsNightMode((prev: boolean): boolean => !prev)
   }
 
   return (

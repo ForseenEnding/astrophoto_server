@@ -53,7 +53,6 @@ env/
 *.pid
 instance/
 *.log
-logs/
 *.db-journal
 
 # ────────────────────────────────────────────
@@ -92,6 +91,8 @@ desktop.ini
 # Project files
 # ────────────────────────────────────────────
 captures
+/static/**
+/logs/**
 <<<<<<< HEAD
 projects
 =======
