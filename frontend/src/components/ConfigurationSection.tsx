@@ -30,7 +30,7 @@ export function ConfigurationSection({
   groupId,
   group,
   configs,
-  onConfigChange,
+ // onConfigChange,
   onBatchUpdate,
   isUpdating
 }: ConfigurationSectionProps) {
