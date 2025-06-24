@@ -3,6 +3,7 @@ import { CameraConfiguration } from './components/CameraConfiguration'
 import { CameraControl } from './components/CameraControl'
 import { ImageGallery } from './components/ImageGallery'
 import { Navigation } from './components/Navigation'
+import { NavigationStatusBar } from './components/NavigationStatusBar'
 import { NightVisionToggle } from './components/NightVisionToggle'
 import { SessionManager } from './components/SessionManager'
 
@@ -58,6 +59,7 @@ export function App() {
     <div className="app">
       <header className="app-header">
         <h1>Astrophotography Control</h1>
+        <NavigationStatusBar />
         <div className="header-controls">
           <Navigation currentView={currentView} onViewChange={setCurrentView} />
           <NightVisionToggle />

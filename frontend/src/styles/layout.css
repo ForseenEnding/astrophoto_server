@@ -1,0 +1,217 @@
+/* layout.css - App structure and layout */
+
+/* App Layout */
+.app {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+  }
+  
+  /* Header Layout */
+  .app-header {
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1.5rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1.5rem;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(220, 38, 38, 0.1);
+  }
+  
+  .app-header h1 {
+    grid-column: 1;
+    font-size: var(--text-xl);
+    font-weight: 600;
+  }
+  
+  .app-header .nav-status-bar {
+    grid-column: 2;
+    justify-self: start;
+    margin-left: 2rem;
+  }
+  
+  .header-controls {
+    grid-column: 3;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+  
+  /* Main Content */
+  .app-main {
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Dashboard Layout */
+  .dashboard {
+    height: 100%;
+    padding: var(--spacing-md);
+    overflow: hidden;
+  }
+  
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    height: 100%;
+  }
+  
+  .dashboard-section {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: inset 0 1px 2px rgba(220, 38, 38, 0.05);
+  }
+  
+  /* Full Screen Views */
+  .full-screen-view {
+    height: 100%;
+    padding: var(--spacing-md);
+    overflow: hidden;
+  }
+  
+  /* Content Containers */
+  .content-container {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Section Headers */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    flex-shrink: 0;
+  }
+  
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  
+  /* Responsive Layout */
+  @media (max-width: 1024px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-sm);
+    }
+    
+    .app-header {
+      grid-template-columns: 1fr auto;
+      gap: var(--spacing-md);
+    }
+    
+    .app-header .nav-status-bar {
+      grid-column: 1;
+      justify-self: start;
+      margin-left: 0;
+      order: -1;
+    }
+    
+    .header-controls {
+      grid-column: 2;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard {
+      padding: var(--spacing-sm);
+    }
+    
+    .full-screen-view {
+      padding: var(--spacing-sm);
+    }
+    
+    .dashboard-section {
+      padding: var(--spacing-sm);
+    }
+    
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-md);
+    }
+    
+    .app-header {
+      padding: var(--spacing-sm) var(--spacing-md);
+      grid-template-columns: 1fr;
+      gap: var(--spacing-sm);
+    }
+    
+    .app-header h1 {
+      grid-column: 1;
+      text-align: center;
+    }
+    
+    .app-header .nav-status-bar {
+      grid-column: 1;
+      justify-self: center;
+    }
+    
+    .header-controls {
+      grid-column: 1;
+      justify-self: center;
+      gap: var(--spacing-sm);
+    }
+  }
+  
+  /* Empty States */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    text-align: center;
+    flex: 1;
+  }
+  
+  .empty-state svg {
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+  }
+  
+  /* Loading States */
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    flex: 1;
+  }
+  
+  /* Error States */
+  .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    color: var(--error);
+    text-align: center;
+    flex: 1;
+  }
