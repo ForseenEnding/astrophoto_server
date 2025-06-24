@@ -1,0 +1,42 @@
+<div class="camera-status">
+    <h3>Camera Status</h3>
+    
+    <div class="status-indicator" data-bind="status-class" data-class-prefix="status-">
+      <span data-bind="status-icon">🔴</span>
+      <span data-bind="status-text">Disconnected</span>
+    </div>
+    
+    <div class="camera-details">
+      <div data-show="model">
+        <p><strong>Model:</strong> <span data-bind="model">Unknown</span></p>
+      </div>
+      
+      <div data-show="battery">
+        <p><strong>Battery:</strong> <span data-bind="battery">Unknown</span></p>
+      </div>
+    </div>
+    
+    <div class="camera-controls">
+      <button data-action="toggle" class="btn-primary" data-bind="button-text">
+        Connect
+      </button>
+      
+      <button data-action="preview" class="btn-secondary" data-show-inline="connected">
+        Live Preview
+      </button>
+      
+      <button data-action="capture" class="btn-secondary" data-show-inline="connected">
+        Capture
+      </button>
+    </div>
+  
+    <div class="preview-section" data-show="connected">
+      <h4>Live Preview</h4>
+      <div class="preview-container">
+        <img data-bind="preview-url" class="camera-preview" alt="Camera Preview">
+        <p class="preview-info">
+          Last updated: <span data-bind="preview-timestamp">Never</span>
+        </p>
+      </div>
+    </div>
+  </div>

@@ -1,10 +1,12 @@
-import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
+  plugins: [react()],
   root: './src',
   build: {
-    outDir: '../../static',  // Output to your FastAPI static directory
+    outDir: '../../static',
     emptyOutDir: true,
     rollupOptions: {
       input: {
@@ -15,7 +17,7 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/api': 'http://localhost:8000'  // Proxy API calls to your FastAPI server
+      '/api': 'http://localhost:8000'
     }
   },
   resolve: {
