@@ -4,7 +4,7 @@ from .session_api import router as session_api
 from .image_analysis_api import router as analysis_api
 from .preset_api import router as preset_api
 from .bulk_capture_api import router as bulk_capture_api
-from .calibration_api import router as calibration_api
+from .session_calibration_api import router as sesison_calibration_api
 
 api_router = APIRouter(
     prefix="/api",
@@ -16,4 +16,4 @@ api_router.include_router(session_api)
 api_router.include_router(analysis_api)
 api_router.include_router(preset_api)
 api_router.include_router(bulk_capture_api)
-api_router.include_router(calibration_api)
+api_router.include_router(sesison_calibration_api)

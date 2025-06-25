@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { CalibrationPage } from './components/CalibrationPage'
 import { CameraConfiguration } from './components/CameraConfiguration'
 import { CameraControl } from './components/CameraControl'
 import { ImageGallery } from './components/ImageGallery'
@@ -19,12 +18,6 @@ export function App() {
         return (
           <div className="full-screen-view">
             <CameraControl />
-          </div>
-        )
-      case 'calibration':
-        return (
-          <div className="full-screen-view">
-            <CalibrationPage />
           </div>
         )
       case 'configuration':

@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from datetime import datetime
 from fastapi import APIRouter, HTTPException, status, Depends
 from app.models.session_models import (
     CreateSessionRequest,
@@ -256,3 +257,74 @@ async def get_session_statistics(session_id: str, service: SessionService = Depe
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to get session statistics: {str(e)}"
         )
+
+
+# Addition to app/services/session_service.py
+
+
+def _create_session_directories(self, session_id: str):
+    """Create the session directory structure including calibration subdirectories"""
+    session_path = self._get_session_path(session_id)
+    session_path.mkdir(exist_ok=True)
+
+    # Core session directories
+    (session_path / "captures").mkdir(exist_ok=True)
+    (session_path / "previews").mkdir(exist_ok=True)
+    (session_path / "analysis").mkdir(exist_ok=True)
+
+    # Calibration frame directories
+    calibration_root = session_path / "calibration"
+    calibration_root.mkdir(exist_ok=True)
+
+    # Create subdirectories for each calibration frame type
+    (calibration_root / "dark").mkdir(exist_ok=True)
+    (calibration_root / "bias").mkdir(exist_ok=True)
+    (calibration_root / "flat").mkdir(exist_ok=True)
+    (calibration_root / "flat_dark").mkdir(exist_ok=True)
+
+    # Create metadata directory for calibration job info
+    (calibration_root / "metadata").mkdir(exist_ok=True)
+
+    logger.info(f"Created session directory structure for {session_id}")
+
+
+def get_session_calibration_summary(self, session_id: str) -> dict[str, any]:
+    """Get a summary of calibration frames for a session"""
+    session_path = self._get_session_path(session_id)
+    calibration_path = session_path / "calibration"
+
+    if not calibration_path.exists():
+        return {"total_frames": 0, "frame_types": {}}
+
+    summary = {"total_frames": 0, "frame_types": {}, "last_capture": None, "total_size_bytes": 0}
+
+    frame_types = ["dark", "bias", "flat", "flat_dark"]
+    latest_time = None
+
+    for frame_type in frame_types:
+        type_path = calibration_path / frame_type
+        if type_path.exists():
+            # Count CR2 files
+            cr2_files = list(type_path.glob("*.cr2")) + list(type_path.glob("*.CR2"))
+
+            # Get file info
+            total_size = sum(f.stat().st_size for f in cr2_files if f.exists())
+
+            if cr2_files:
+                latest_file_time = max(f.stat().st_mtime for f in cr2_files)
+                if latest_time is None or latest_file_time > latest_time:
+                    latest_time = latest_file_time
+
+            summary["frame_types"][frame_type] = {
+                "count": len(cr2_files),
+                "size_bytes": total_size,
+                "files": [f.name for f in cr2_files],
+            }
+
+            summary["total_frames"] += len(cr2_files)
+            summary["total_size_bytes"] += total_size
+
+    if latest_time:
+        summary["last_capture"] = datetime.fromtimestamp(latest_time).isoformat()
+
+    return summary
