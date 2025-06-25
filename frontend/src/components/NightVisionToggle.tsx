@@ -36,13 +36,13 @@ export function NightVisionToggle() {
     >
       {isNightMode ? (
         <>
-          <Moon className="w-4 h-4 mr-2" />
-          Night Mode
+          <Moon size={16} />
+          <span>Night Mode</span>
         </>
       ) : (
         <>
-          <Sun className="w-4 h-4 mr-2" />
-          Normal Mode
+          <Sun size={16} />
+          <span>Normal Mode</span>
         </>
       )}
     </button>

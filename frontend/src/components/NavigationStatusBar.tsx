@@ -9,10 +9,10 @@ export function NavigationCameraStatus() {
   return (
     <div className="nav-status-indicator">
       <div className="nav-status-item">
-        <Camera className="w-4 h-4 mr-2" />
+        <Camera size={16} />
         <span className="nav-status-label">Camera:</span>
         <div className={`nav-status-dot ${status.connected ? 'connected' : 'disconnected'}`}>
-          <Circle className={`w-2 h-2 ${status.connected ? 'fill-green-500 text-green-500' : 'fill-red-500 text-red-500'}`} />
+          <Circle size={8} className={status.connected ? 'connected' : 'disconnected'} />
         </div>
         <span className={`nav-status-text ${status.connected ? 'connected' : 'disconnected'}`}>
           {status.connected ? 'Connected' : 'Disconnected'}
@@ -32,14 +32,14 @@ export function NavigationSessionStatus() {
       <div className="nav-status-item">
         {activeSession ? (
           <>
-            <FolderOpen className="w-4 h-4 mr-2 text-green-500" />
+            <FolderOpen size={16} className="connected" />
             <span className="nav-status-label">Session:</span>
             <span className="nav-session-name">{activeSession.name}</span>
             <span className="nav-session-target">({activeSession.target})</span>
           </>
         ) : (
           <>
-            <AlertCircle className="w-4 h-4 mr-2 text-yellow-500" />
+            <AlertCircle size={16} className="inactive" />
             <span className="nav-status-label">Session:</span>
             <span className="nav-status-text inactive">None Active</span>
           </>

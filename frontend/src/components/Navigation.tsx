@@ -25,8 +25,8 @@ export function Navigation({ currentView, onViewChange }: NavigationProps) {
               onClick={() => onViewChange(id)}
               className={`nav-item ${currentView === id ? 'active' : ''}`}
             >
-              <Icon className="w-4 h-4 mr-2" />
-              {label}
+              <Icon size={16} />
+              <span>{label}</span>
             </button>
           </li>
         ))}

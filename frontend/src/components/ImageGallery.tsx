@@ -2,18 +2,18 @@ import { Image } from 'lucide-react'
 
 export function ImageGallery() {
   return (
-    <div className="image-gallery">
-      <h2>
-        <Image className="inline w-6 h-6 mr-2" />
-        Image Gallery
-      </h2>
+    <div className="content-container">
+      <div className="section-header">
+        <h2 className="section-title">
+          <Image size={24} />
+          Image Gallery
+        </h2>
+      </div>
       
-      <div className="gallery-placeholder">
-        <Image className="w-16 h-16 text-gray-400" />
-        <p className="text-lg text-gray-600">Image Gallery Coming Soon</p>
-        <p className="text-sm text-gray-500">
-          View and manage your captured astrophotography images
-        </p>
+      <div className="empty-state">
+        <Image size={64} />
+        <p>Image Gallery Coming Soon</p>
+        <p>View and manage your captured astrophotography images</p>
       </div>
     </div>
   )

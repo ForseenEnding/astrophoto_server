@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { CameraConfiguration } from './components/CameraConfiguration'
-import { CameraControl } from './components/CameraControl'
+import { CameraControl } from './components/camera/CameraControl'
+import { CameraConfiguration } from './components/config/CameraConfiguration'
 import { ImageGallery } from './components/ImageGallery'
 import { Navigation } from './components/Navigation'
 import { NavigationStatusBar } from './components/NavigationStatusBar'
 import { NightVisionToggle } from './components/NightVisionToggle'
-import { SessionManager } from './components/SessionManager'
+import { SessionManager } from './components/sessions/SessionManager'
 
 type ViewType = 'dashboard' | 'camera' | 'calibration' | 'sessions' | 'gallery' | 'configuration'
 
@@ -38,12 +38,23 @@ export function App() {
             <ImageGallery />
           </div>
         )
+      case 'calibration':
+        return (
+          <div className="full-screen-view">
+            <div className="empty-state">
+              <p>Calibration view will be implemented here.</p>
+            </div>
+          </div>
+        )
       case 'dashboard':
       default:
         return (
           <div className="dashboard">
             <div className="dashboard-grid">
               <div className="dashboard-section">
+                <div className="section-header">
+                  <h2 className="section-title">Camera Control</h2>
+                </div>
                 <CameraControl compact />
               </div>
               <div className="dashboard-section">
@@ -59,7 +70,9 @@ export function App() {
     <div className="app">
       <header className="app-header">
         <h1>Astrophotography Control</h1>
-        <NavigationStatusBar />
+        <div className="nav-status-bar">
+          <NavigationStatusBar />
+        </div>
         <div className="header-controls">
           <Navigation currentView={currentView} onViewChange={setCurrentView} />
           <NightVisionToggle />
@@ -71,4 +84,4 @@ export function App() {
       </main>
     </div>
   )
-}
+} 

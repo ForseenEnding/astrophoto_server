@@ -59,6 +59,32 @@
     box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3);
   }
   
+  .btn-danger {
+    background-color: var(--error);
+    color: black;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+  }
+  
+  .btn-danger:hover:not(:disabled) {
+    background-color: #b91c1c;
+    box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+    transform: translateY(-1px);
+  }
+  
+  .btn-success {
+    background-color: #059669;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
+  }
+  
+  .btn-success:hover:not(:disabled) {
+    background-color: #047857;
+    box-shadow: 0 4px 8px rgba(5, 150, 105, 0.3);
+    transform: translateY(-1px);
+  }
+  
   .btn.overlay {
     opacity: 0.8;
     background-color: var(--overlay-surface);
@@ -75,6 +101,14 @@
   }
   
   .form-group label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: var(--text-sm);
+  }
+  
+  .form-label {
     display: block;
     margin-bottom: var(--spacing-sm);
     color: var(--text-primary);
@@ -115,6 +149,13 @@
     opacity: 0.6;
     cursor: not-allowed;
     background-color: var(--surface);
+  }
+  
+  .input.error,
+  .textarea.error,
+  .select.error {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
   }
   
   .select {
@@ -182,6 +223,19 @@
     background-color: rgba(82, 82, 82, 0.1);
     color: var(--status-disconnected);
     border: 1px solid rgba(82, 82, 82, 0.3);
+  }
+  
+  .status-text {
+    font-weight: 500;
+    font-size: var(--text-sm);
+  }
+  
+  .status-indicator .connected {
+    color: rgb(34, 197, 94);
+  }
+  
+  .status-indicator .disconnected {
+    color: var(--text-muted);
   }
   
   /* Progress Bars */
@@ -272,6 +326,10 @@
     font-size: var(--text-sm);
     margin: 0;
     line-height: 1.4;
+  }
+  
+  .card-content {
+    padding: var(--spacing-md) 0;
   }
   
   .card-actions {

@@ -92,6 +92,18 @@
     transition: all 0.3s ease;
   }
   
+  .nav-status-dot .connected {
+    color: rgb(34, 197, 94);
+  }
+  
+  .nav-status-dot .disconnected {
+    color: var(--text-muted);
+  }
+  
+  .nav-status-dot .inactive {
+    color: rgb(245, 158, 11);
+  }
+  
   .nav-session-name {
     color: var(--text-primary);
     font-weight: 600;
