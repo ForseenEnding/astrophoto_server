@@ -10,7 +10,7 @@ interface CameraControlProps {
   compact?: boolean
 }
 
-interface BulkCaptureStatus {
+export interface BulkCaptureStatus {
   job_id: string
   status: 'running' | 'paused' | 'completed' | 'cancelled' | 'error'
   progress: number
@@ -187,28 +187,18 @@ export function CameraControl({ compact = false }: CameraControlProps) {
 
   if (compact) {
     return (
-      <div className="space-y-4">
-        <CameraStatus
-          connected={status.connected}
-          isConnecting={isConnecting}
-          isDisconnecting={isDisconnecting}
-          connectError={connectError?.message}
-          onToggleConnection={handleToggleConnection}
-        />
-        <CaptureControls
-          connected={status.connected}
-          isCapturing={isCapturing}
-          captureError={captureError?.message}
-          onCapture={handleSingleCapture}
-        />
+      <div className="camera-control-compact">
+        <div className="camera-preview-section">
+          <LivePreview />
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="space-y-4">
+    <div className="camera-control">
+      <div className="camera-control-panel">
+        <div className="camera-controls-row">
           <CameraStatus
             connected={status.connected}
             isConnecting={isConnecting}
@@ -230,12 +220,13 @@ export function CameraControl({ compact = false }: CameraControlProps) {
             currentJob={currentBulkJob}
             isStarting={isBulkStarting}
             error={bulkError || undefined}
+            compact={true}
           />
         </div>
-        
-        <div>
-          <LivePreview />
-        </div>
+      </div>
+      
+      <div className="camera-preview-section">
+        <LivePreview />
       </div>
     </div>
   )

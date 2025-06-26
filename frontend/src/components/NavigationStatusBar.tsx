@@ -1,6 +1,6 @@
 import { useCameraStatus } from '@/hooks/useCameraStatus'
 import { useSessions } from '@/hooks/useSessions'
-import { AlertCircle, Camera, Circle, FolderOpen } from 'lucide-react'
+import { AlertCircle, Camera, FolderOpen } from 'lucide-react'
 
 // Camera Status Indicator for Navigation Bar
 export function NavigationCameraStatus() {
@@ -10,10 +10,6 @@ export function NavigationCameraStatus() {
     <div className="nav-status-indicator">
       <div className="nav-status-item">
         <Camera size={16} />
-        <span className="nav-status-label">Camera:</span>
-        <div className={`nav-status-dot ${status.connected ? 'connected' : 'disconnected'}`}>
-          <Circle size={8} className={status.connected ? 'connected' : 'disconnected'} />
-        </div>
         <span className={`nav-status-text ${status.connected ? 'connected' : 'disconnected'}`}>
           {status.connected ? 'Connected' : 'Disconnected'}
         </span>

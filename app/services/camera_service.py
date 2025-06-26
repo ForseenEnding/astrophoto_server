@@ -6,7 +6,7 @@ import threading
 from enum import IntEnum
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional, List, Any
 from app.exceptions.camera_exceptions import (
     CameraError,
     CameraNotConnectedError,
@@ -262,7 +262,7 @@ class CameraService:
             raise CameraError("Failed to get configs", e)
 
     @synchronized(_lock)
-    def get_values(self, configs=List[str]) -> dict[str, str]:
+    def get_values(self, configs: List[str]) -> dict[str, str]:
         logger.debug(f"get_values({configs})")
         try:
             # Fail-fast if camera is not connected
@@ -280,7 +280,7 @@ class CameraService:
 
     @synchronized(_lock)
     @wrap_gphoto2_error("camera.set_config")
-    def set_config(self, configs=list[tuple[str, any]]) -> bool:
+    def set_config(self, configs: list[tuple[str, Any]]) -> bool:
         logger.debug(f"set_config({configs})")
         try:
             # Fail-fast if camera is not connected
